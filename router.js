@@ -1,5 +1,101 @@
 // Router - Système de navigation entre les pages
 
+// Utilitaires de stockage
+const Storage = {
+    get(key, defaultValue = null) {
+        try {
+            const value = localStorage.getItem(key);
+            return value ? JSON.parse(value) : defaultValue;
+        } catch (error) {
+            console.error('Erreur de lecture localStorage:', error);
+            return defaultValue;
+        }
+    },
+    
+    set(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+            return true;
+        } catch (error) {
+            console.error('Erreur d\'écriture localStorage:', error);
+            return false;
+        }
+    },
+    
+    remove(key) {
+        try {
+            localStorage.removeItem(key);
+            return true;
+        } catch (error) {
+            console.error('Erreur de suppression localStorage:', error);
+            return false;
+        }
+    },
+    
+    clear() {
+        try {
+            localStorage.clear();
+            return true;
+        } catch (error) {
+            console.error('Erreur de nettoyage localStorage:', error);
+            return false;
+        }
+    }
+};
+
+// Utilitaires globaux
+const Utils = {
+    formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('fr-FR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    },
+    
+    formatWeight(weight) {
+        if (!weight) return '';
+        if (weight.includes('kg')) return weight;
+        return weight.replace(',', '.') + 'kg';
+    },
+    
+    parseWeight(weight) {
+        if (!weight) return 0;
+        return parseFloat(weight.replace('kg', '').replace(',', '.')) || 0;
+    },
+    
+    validateInput(value, type) {
+        switch (type) {
+            case 'reps':
+                return /^\d+$/.test(value) && parseInt(value) > 0 && parseInt(value) <= 100;
+            case 'weight':
+                const weightValue = value.replace('kg', '').replace(',', '.');
+                return /^\d+\.?\d*$/.test(weightValue) && parseFloat(weightValue) > 0;
+            case 'exerciseName':
+                return value.length >= 2 && value.length <= 50;
+            default:
+                return true;
+        }
+    },
+    
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    },
+    
+    generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+};
+
 class Router {
     constructor() {
         this.currentPage = 'home';
@@ -158,7 +254,7 @@ function showToast(message, type = 'success') {
 }
 
 function exportData() {
-    const workoutData = JSON.parse(localStorage.getItem('workoutData') || '{}');
+    const workoutData = Storage.get('workoutData', {});
     
     if (Object.keys(workoutData).length === 0) {
         showToast('Aucune donnée à exporter', 'info');
@@ -188,8 +284,13 @@ function exportData() {
         }
     });
     
+    if (csvData.length === 0) {
+        showToast('Aucune donnée à exporter', 'info');
+        return;
+    }
+    
     const csvContent = [
-        Object.keys(csvData[0] || {}).join(','),
+        Object.keys(csvData[0]).join(','),
         ...csvData.map(row => Object.values(row).map(val => 
             typeof val === 'string' && val.includes(',') ? `"${val}"` : val
         ).join(','))
@@ -207,102 +308,6 @@ function exportData() {
     
     showToast('Export CSV terminé');
 }
-
-// Utilitaires de stockage
-const Storage = {
-    get(key, defaultValue = null) {
-        try {
-            const value = localStorage.getItem(key);
-            return value ? JSON.parse(value) : defaultValue;
-        } catch (error) {
-            console.error('Erreur de lecture localStorage:', error);
-            return defaultValue;
-        }
-    },
-    
-    set(key, value) {
-        try {
-            localStorage.setItem(key, JSON.stringify(value));
-            return true;
-        } catch (error) {
-            console.error('Erreur d\'écriture localStorage:', error);
-            return false;
-        }
-    },
-    
-    remove(key) {
-        try {
-            localStorage.removeItem(key);
-            return true;
-        } catch (error) {
-            console.error('Erreur de suppression localStorage:', error);
-            return false;
-        }
-    },
-    
-    clear() {
-        try {
-            localStorage.clear();
-            return true;
-        } catch (error) {
-            console.error('Erreur de nettoyage localStorage:', error);
-            return false;
-        }
-    }
-};
-
-// Utilitaires de formatage
-const Utils = {
-    formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('fr-FR', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    },
-    
-    formatWeight(weight) {
-        if (!weight) return '';
-        if (weight.includes('kg')) return weight;
-        return weight.replace(',', '.') + 'kg';
-    },
-    
-    parseWeight(weight) {
-        if (!weight) return 0;
-        return parseFloat(weight.replace('kg', '').replace(',', '.')) || 0;
-    },
-    
-    validateInput(value, type) {
-        switch (type) {
-            case 'reps':
-                return /^\d+$/.test(value) && parseInt(value) > 0 && parseInt(value) <= 100;
-            case 'weight':
-                const weightValue = value.replace('kg', '').replace(',', '.');
-                return /^\d+\.?\d*$/.test(weightValue) && parseFloat(weightValue) > 0;
-            case 'exerciseName':
-                return value.length >= 2 && value.length <= 50;
-            default:
-                return true;
-        }
-    },
-    
-    debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    },
-    
-    generateId() {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2);
-    }
-};
 
 // Initialisation du routeur à la fin du chargement
 document.addEventListener('DOMContentLoaded', () => {
