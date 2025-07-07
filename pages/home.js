@@ -7,7 +7,8 @@ class HomePage {
     }
     
     render() {
-        const presets = window.dataManager.getPresets();
+        const presets = window.dataManager ? window.dataManager.getPresets() : {};
+        const weekCycle = ['Push', 'Pull', 'Legs'];
         
         return `
             <div class="max-w-6xl mx-auto space-y-6">
@@ -31,7 +32,7 @@ class HomePage {
                 
                 <!-- Sélecteur de type de jour -->
                 <div class="flex space-x-2 bg-slate-800 p-1 rounded-lg border border-slate-700 w-fit">
-                    ${CONFIG.WEEK_CYCLE.filter((day, index, arr) => arr.indexOf(day) === index).map(day => `
+                    ${weekCycle.map(day => `
                         <button 
                             onclick="homePage.selectDayType('${day}')"
                             class="day-btn ${day.toLowerCase()} ${this.selectedDayType === day ? 'active' : ''}"
@@ -296,9 +297,15 @@ class HomePage {
                     <div class="form-group">
                         <label class="form-label">Catégorie</label>
                         <select id="exercise-category" class="form-select">
-                            ${Object.keys(CONFIG.CATEGORIES).map(cat => 
-                                `<option value="${cat}">${cat}</option>`
-                            ).join('')}
+                            <option value="Pectoraux">Pectoraux</option>
+                            <option value="Épaules">Épaules</option>
+                            <option value="Dos">Dos</option>
+                            <option value="Biceps">Biceps</option>
+                            <option value="Triceps">Triceps</option>
+                            <option value="Quadriceps">Quadriceps</option>
+                            <option value="Postérieur">Postérieur</option>
+                            <option value="Fonctionnel">Fonctionnel</option>
+                            <option value="Unilatéral">Unilatéral</option>
                         </select>
                     </div>
                 </div>
