@@ -17,7 +17,7 @@ html, body {
 }
 
 /* ================================
-   VARIABLES CSS
+   VARIABLES CSS AMÉLIORÉES
    ================================ */
 :root {
   --color-push: #f97316;
@@ -26,24 +26,27 @@ html, body {
   --color-push-hover: #ea580c;
   --color-pull-hover: #059669;
   --color-legs-hover: #2563eb;
+  --gradient-main: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --glass-bg: rgba(30, 41, 59, 0.7);
+  --glass-border: rgba(71, 85, 105, 0.3);
 }
 
 /* ================================
-   LAYOUT PRINCIPAL - FIX ESPACE
+   LAYOUT PRINCIPAL - AMÉLIORÉ
    ================================ */
 
 .app-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: var(--gradient-main);
 }
 
 /* ================================
-   SIDEBAR COMPACTE - FIX DIRECTION
+   SIDEBAR COMPACTE - STYLE GLASSMORPHISM
    ================================ */
 
-/* Overlay */
+/* Overlay amélioré */
 .sidebar-overlay {
   position: fixed;
   top: 0;
@@ -51,7 +54,7 @@ html, body {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(8px);
   z-index: 40;
   opacity: 0;
   visibility: hidden;
@@ -63,23 +66,24 @@ html, body {
   visibility: visible;
 }
 
-/* Sidebar principale - CORRIGÉE */
+/* Sidebar principale - AMÉLIORÉE */
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
-  width: 200px;
-  background: #1e293b;
-  border-right: 1px solid #475569;
+  width: 240px;
+  background: rgba(30, 41, 59, 0.95);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid var(--glass-border);
   z-index: 50;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease-out;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.3);
 }
 
-/* États de la sidebar - CORRIGÉS */
+/* États de la sidebar - AMÉLIORÉS */
 .sidebar.closed {
   transform: translateX(-100%);
 }
@@ -88,14 +92,14 @@ html, body {
   transform: translateX(0);
 }
 
-/* Header de la sidebar */
+/* Header de la sidebar - AMÉLIORÉ */
 .sidebar-header {
-  height: 64px;
-  padding: 16px;
-  border-bottom: 1px solid #475569;
+  height: 80px;
+  padding: 20px;
+  border-bottom: 1px solid var(--glass-border);
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.9) 100%);
 }
 
 .sidebar-title {
@@ -104,41 +108,63 @@ html, body {
   color: white;
 }
 
-/* Navigation principale */
+/* Navigation principale - AMÉLIORÉE */
 .sidebar-navigation {
   flex: 1;
   padding: 16px 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
-/* Items de navigation */
+/* Items de navigation - STYLE GLASSMORPHISM */
 .sidebar-nav-item {
   width: 100%;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 14px 16px;
+  margin: 0 12px;
   color: #cbd5e1;
   background: none;
   border: none;
   text-align: left;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  border-radius: 12px;
+  font-weight: 500;
 }
 
 .sidebar-nav-item:hover {
   color: white;
-  background: #475569;
+  background: rgba(71, 85, 105, 0.6);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-nav-item.active {
-  background: #06b6d4;
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
   color: white;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+  transform: translateX(4px);
+}
+
+/* Effet brillant sur hover */
+.sidebar-nav-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.sidebar-nav-item:hover::before {
+  left: 100%;
 }
 
 /* Icônes des nav items */
@@ -149,6 +175,7 @@ html, body {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  position: relative;
 }
 
 .sidebar-nav-text {
@@ -160,34 +187,19 @@ html, body {
   content: '';
   position: absolute;
   right: 0;
-  top: 0;
-  bottom: 0;
+  top: 50%;
+  transform: translateY(-50%);
   width: 4px;
+  height: 20px;
   background: white;
+  border-radius: 2px 0 0 2px;
 }
 
-.sidebar-nav-item::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: #06b6d4;
-  transform: scaleY(0);
-  transition: transform 0.2s ease;
-  transform-origin: center;
-}
-
-.sidebar-nav-item:hover::before,
-.sidebar-nav-item.active::before {
-  transform: scaleY(1);
-}
-
-/* Section paramètres en bas */
+/* Section paramètres en bas - AMÉLIORÉE */
 .sidebar-bottom {
-  border-top: 1px solid #475569;
+  border-top: 1px solid var(--glass-border);
   padding: 16px;
+  background: rgba(15, 23, 42, 0.5);
 }
 
 .sidebar-settings-item {
@@ -207,159 +219,717 @@ html, body {
 
 .sidebar-settings-item:hover {
   color: white;
-  background: #475569;
+  background: rgba(71, 85, 105, 0.6);
 }
 
 /* ================================
-   HEADER PRINCIPAL - FIX ESPACE
+   HEADER PRINCIPAL - AMÉLIORÉ
    ================================ */
 
 .main-header {
-  background: #1e293b;
-  border-bottom: 1px solid #475569;
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
   height: 64px;
   flex-shrink: 0;
   position: sticky;
   top: 0;
   z-index: 30;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Bouton hamburger */
+/* Bouton hamburger - AMÉLIORÉ */
 .hamburger-btn {
-  padding: 8px;
-  border-radius: 8px;
+  padding: 10px;
+  border-radius: 12px;
   color: #94a3b8;
-  background: none;
+  background: rgba(51, 65, 85, 0.5);
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
 .hamburger-btn:hover {
   color: white;
-  background: #475569;
-  transform: scale(1.1);
+  background: rgba(71, 85, 105, 0.7);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .hamburger-btn.active {
-  background: #475569;
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
   color: white;
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
 }
 
-/* Badge semaine */
+/* Badge semaine - AMÉLIORÉ */
 .week-badge {
-  background: #06b6d4;
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
   color: #ecfeff;
-  padding: 4px 12px;
-  border-radius: 9999px;
+  padding: 6px 16px;
+  border-radius: 12px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 /* ================================
-   CONTENU PRINCIPAL - FIX ESPACE
+   CONTENU PRINCIPAL - AMÉLIORÉ
    ================================ */
 
 .main-content {
   flex: 1;
-  padding: 24px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  padding: 32px;
+  background: var(--gradient-main);
   overflow-y: auto;
+  min-height: 0;
 }
 
 /* ================================
-   BOUTONS JOUR (Push/Pull/Legs)
+   BOUTONS JOUR (Push/Pull/Legs) - AMÉLIORÉS
    ================================ */
 
 .day-btn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  border: 2px solid;
-  min-width: 80px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  min-width: 90px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.day-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.day-btn:hover::before {
+  left: 100%;
 }
 
 .day-btn.push.active {
-  background-color: var(--color-push);
+  background: linear-gradient(135deg, var(--color-push), var(--color-push-hover));
   border-color: var(--color-push);
   color: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+  transform: translateY(-2px);
 }
 
 .day-btn.pull.active {
-  background-color: var(--color-pull);
+  background: linear-gradient(135deg, var(--color-pull), var(--color-pull-hover));
   border-color: var(--color-pull);
   color: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  transform: translateY(-2px);
 }
 
 .day-btn.legs.active {
-  background-color: var(--color-legs);
+  background: linear-gradient(135deg, var(--color-legs), var(--color-legs-hover));
   border-color: var(--color-legs);
   color: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  transform: translateY(-2px);
 }
 
 .day-btn:not(.active) {
-  background: transparent;
-  border-color: #475569;
+  background: rgba(51, 65, 85, 0.5);
+  border-color: rgba(71, 85, 105, 0.5);
   color: #cbd5e1;
 }
 
 .day-btn:not(.active):hover {
+  background: rgba(71, 85, 105, 0.7);
   border-color: #64748b;
   color: white;
-  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* ================================
-   TABLEAU D'ENTRAÎNEMENT
+   CARTES ET COMPOSANTS - GLASSMORPHISM
+   ================================ */
+
+.card, .glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.card:hover, .glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  border-color: rgba(6, 182, 212, 0.3);
+}
+
+.card-header {
+  background: rgba(51, 65, 85, 0.5);
+  padding: 20px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* ================================
+   EXERCISE ITEMS - AMÉLIORÉS
+   ================================ */
+
+.exercise-item {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.exercise-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  border-color: rgba(6, 182, 212, 0.3);
+}
+
+.exercise-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  transition: left 0.5s;
+}
+
+.exercise-item:hover::before {
+  left: 100%;
+}
+
+/* ================================
+   BOUTONS - STYLE MODERNE
+   ================================ */
+
+.btn, .btn-primary, .btn-secondary, .btn-danger, .btn-success {
+  position: relative;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn::before, .btn-primary::before, .btn-secondary::before, .btn-danger::before, .btn-success::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before, .btn-primary:hover::before, .btn-secondary:hover::before, .btn-danger:hover::before, .btn-success:hover::before {
+  left: 100%;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  color: white;
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(6, 182, 212, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(51, 65, 85, 0.8);
+  color: white;
+  border: 1px solid rgba(71, 85, 105, 0.5);
+}
+
+.btn-secondary:hover {
+  background: rgba(71, 85, 105, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Boutons icônes */
+.btn-icon {
+  padding: 8px;
+  border-radius: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #94a3b8;
+}
+
+.btn-icon:hover {
+  background: rgba(71, 85, 105, 0.6);
+  color: white;
+  transform: scale(1.1);
+}
+
+/* ================================
+   INPUTS - STYLE MODERNE
+   ================================ */
+
+.form-input, .form-select, .form-textarea {
+  background: rgba(51, 65, 85, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: white;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-weight: 500;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+  background: rgba(51, 65, 85, 0.9);
+  transform: scale(1.02);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: #e2e8f0;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+/* Workout inputs spécialisés */
+.workout-input {
+  background: rgba(51, 65, 85, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  border-radius: 8px;
+  padding: 8px 12px;
+  text-align: center;
+  color: white;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.workout-input:focus {
+  outline: none;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+  transform: scale(1.05);
+  background: rgba(6, 182, 212, 0.1);
+}
+
+.workout-input.reps {
+  width: 60px;
+}
+
+.workout-input.weight {
+  width: 70px;
+}
+
+/* ================================
+   PROGRESS BARS - ANIMÉES
+   ================================ */
+
+.progress-bar {
+  height: 8px;
+  background: rgba(51, 65, 85, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ================================
+   STATS CARDS - AMÉLIORÉES
+   ================================ */
+
+.stat-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  border-color: rgba(6, 182, 212, 0.3);
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  transition: left 0.5s;
+}
+
+.stat-card:hover::before {
+  left: 100%;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-label {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* ================================
+   ANIMATIONS ET TRANSITIONS
+   ================================ */
+
+.fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(30px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from { 
+    transform: translateY(30px); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+}
+
+/* ================================
+   MODAL - STYLE MODERNE
+   ================================ */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal {
+  background: rgba(30, 41, 59, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: scale(0.9);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  padding: 24px 24px 0;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.modal-footer {
+  padding: 0 24px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* ================================
+   RESPONSIVE - AMÉLIORÉ
+   ================================ */
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 280px;
+  }
+  
+  .main-content {
+    padding: 20px;
+  }
+  
+  .stat-card {
+    padding: 16px;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+  
+  .btn, .btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  
+  .day-btn {
+    padding: 10px 16px;
+    min-width: 70px;
+  }
+  
+  .workout-input.reps {
+    width: 50px;
+  }
+  
+  .workout-input.weight {
+    width: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 100%;
+  }
+  
+  .main-content {
+    padding: 16px;
+  }
+  
+  .week-badge {
+    display: none;
+  }
+  
+  .card-body, .modal-body {
+    padding: 16px;
+  }
+}
+
+/* ================================
+   SCROLLBARS PERSONNALISÉES
+   ================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(6, 182, 212, 0.6);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.8);
+}
+
+/* ================================
+   TOAST NOTIFICATIONS - AMÉLIORÉES
+   ================================ */
+
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(30, 41, 59, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  color: white;
+  font-weight: 500;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  min-width: 250px;
+}
+
+.toast.show {
+  transform: translateX(0);
+}
+
+.toast.success {
+  border-left: 4px solid #10b981;
+}
+
+.toast.error {
+  border-left: 4px solid #ef4444;
+}
+
+.toast.info {
+  border-left: 4px solid #06b6d4;
+}
+
+/* ================================
+   TABLEAU D'ENTRAÎNEMENT - AMÉLIORÉ
    ================================ */
 
 .workout-table {
-  background: #1e293b;
-  border-radius: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
   overflow: hidden;
-  border: 1px solid #475569;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .workout-table thead {
-  background: #334155;
+  background: rgba(51, 65, 85, 0.8);
+  backdrop-filter: blur(10px);
 }
 
 .workout-table th {
-  padding: 12px;
+  padding: 16px 12px;
   text-align: left;
   font-size: 14px;
-  font-weight: 500;
-  color: #cbd5e1;
-  border-bottom: 1px solid #475569;
+  font-weight: 600;
+  color: #e2e8f0;
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .workout-table td {
-  padding: 12px;
-  border-bottom: 1px solid #475569;
+  padding: 16px 12px;
+  border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+}
+
+.workout-table tbody tr {
+  transition: all 0.2s ease;
 }
 
 .workout-table tbody tr:hover {
   background: rgba(51, 65, 85, 0.6);
+  backdrop-filter: blur(10px);
 }
 
 .exercise-row {
-  border-bottom: 1px solid #475569;
-  transition: background-color 0.2s ease;
+  border-bottom: 1px solid var(--glass-border);
+  transition: all 0.2s ease;
 }
 
 .exercise-row:nth-child(even) {
-  background: rgba(51, 65, 85, 0.3);
+  background: rgba(51, 65, 85, 0.2);
 }
 
 .exercise-row:hover {
-  background: rgba(51, 65, 85, 0.6);
+  background: rgba(51, 65, 85, 0.4);
+  transform: scale(1.01);
 }
 
 .exercise-row.push {
@@ -375,229 +945,272 @@ html, body {
 }
 
 /* ================================
-   INPUTS D'ENTRAÎNEMENT
+   WEEK NAVIGATION - NOUVEAU
    ================================ */
 
-.workout-input {
-  background: #334155;
-  border: 1px solid #475569;
-  border-radius: 4px;
-  padding: 4px 8px;
-  text-align: center;
+.week-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.week-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(51, 65, 85, 0.5);
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  border-radius: 10px;
+  color: #cbd5e1;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.week-nav-btn:hover {
+  background: rgba(71, 85, 105, 0.7);
   color: white;
-  transition: all 0.2s ease;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.workout-input:focus {
-  outline: none;
-  border-color: #06b6d4;
-  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
-  transform: scale(1.05);
+.day-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
 }
 
-.workout-input.reps {
-  width: 56px;
+.day-indicator.push {
+  background: linear-gradient(135deg, var(--color-push), var(--color-push-hover));
 }
 
-.workout-input.weight {
-  width: 64px;
+.day-indicator.pull {
+  background: linear-gradient(135deg, var(--color-pull), var(--color-pull-hover));
+}
+
+.day-indicator.legs {
+  background: linear-gradient(135deg, var(--color-legs), var(--color-legs-hover));
 }
 
 /* ================================
-   CARTES ET COMPOSANTS
+   PRESET CARDS - NOUVEAU
    ================================ */
 
-.card {
-  background: #1e293b;
-  border-radius: 8px;
-  border: 1px solid #475569;
-  overflow: hidden;
-  backdrop-filter: blur(10px);
-}
-
-.card-header {
-  background: #334155;
-  padding: 16px;
-  border-bottom: 1px solid #475569;
-}
-
-.card-body {
-  padding: 16px;
-}
-
 .preset-card {
-  background: #1e293b;
-  border-radius: 8px;
-  border: 1px solid #475569;
-  padding: 16px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 20px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.preset-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  transition: left 0.5s;
+}
+
+.preset-card:hover::before {
+  left: 100%;
 }
 
 .preset-card:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  border-color: rgba(6, 182, 212, 0.3);
 }
 
 .preset-card.push {
-  border-left: 4px solid #f97316;
+  border-left: 4px solid var(--color-push);
 }
 
 .preset-card.pull {
-  border-left: 4px solid #10b981;
+  border-left: 4px solid var(--color-pull);
 }
 
 .preset-card.legs {
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid var(--color-legs);
 }
 
 /* ================================
-   BOUTONS
+   TIMER MODAL - NOUVEAU
    ================================ */
 
-.btn-primary {
-  background: #06b6d4;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+.timer-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
 }
 
-.btn-primary:hover {
-  background: #0891b2;
+.timer-content {
+  background: rgba(30, 41, 59, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  min-width: 300px;
 }
 
-.btn-secondary {
-  background: #334155;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.btn-secondary:hover {
-  background: #475569;
-}
-
-.btn-danger {
-  background: #ef4444;
-  color: white;
-  padding: 4px 12px;
-  border-radius: 6px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.btn-danger:hover {
-  background: #dc2626;
-}
-
-.btn-success {
-  background: #10b981;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.btn-success:hover {
-  background: #059669;
+.timer-display {
+  font-size: 4rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 20px 0;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
 }
 
 /* ================================
-   RESPONSIVE
-   ================================ */
-
-@media (max-width: 768px) {
-  .sidebar {
-    width: 240px;
-  }
-  
-  .main-header {
-    height: 56px;
-    padding: 0 12px;
-  }
-  
-  .main-header h1 {
-    font-size: 18px;
-  }
-  
-  .week-badge {
-    font-size: 12px;
-    padding: 2px 8px;
-  }
-  
-  .main-content {
-    padding: 16px;
-  }
-  
-  .sidebar-header {
-    height: 56px;
-  }
-  
-  .workout-input.reps {
-    width: 48px;
-  }
-  
-  .workout-input.weight {
-    width: 56px;
-  }
-}
-
-@media (max-width: 480px) {
-  .sidebar {
-    width: 280px;
-  }
-  
-  .main-header h1 {
-    font-size: 16px;
-  }
-  
-  .week-badge {
-    display: none;
-  }
-}
-
-/* ================================
-   SCROLLBARS
-   ================================ */
-
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #1e293b;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #475569;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
-}
-
-/* ================================
-   ÉTATS DE FOCUS
+   STATES ET FOCUS - AMÉLIORÉS
    ================================ */
 
 .sidebar-nav-item:focus,
 .hamburger-btn:focus,
+.btn:focus,
 .btn-primary:focus,
-.workout-input:focus {
+.btn-secondary:focus,
+.workout-input:focus,
+.form-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px #06b6d4, 0 0 0 4px rgba(6, 182, 212, 0.2);
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.3);
+}
+
+/* ================================
+   LOADING STATES - NOUVEAU
+   ================================ */
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #06b6d4;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.btn.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.btn.loading::after {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+/* ================================
+   HOVER EFFECTS AVANCÉS
+   ================================ */
+
+.hover-lift {
+  transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+}
+
+/* ================================
+   UTILITY CLASSES
+   ================================ */
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.backdrop-blur {
+  backdrop-filter: blur(20px);
+}
+
+/* ================================
+   DARK MODE VARIANTS (pour le futur)
+   ================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --glass-bg: rgba(30, 41, 59, 0.8);
+    --glass-border: rgba(71, 85, 105, 0.4);
+  }
+}
+
+/* ================================
+   PRINT STYLES
+   ================================ */
+
+@media print {
+  .sidebar,
+  .hamburger-btn,
+  .toast {
+    display: none !important;
+  }
+  
+  .main-content {
+    padding: 0;
+    background: white;
+    color: black;
+  }
+  
+  .glass-card,
+  .card {
+    border: 1px solid #ccc;
+    background: white;
+    box-shadow: none;
+  }
 }

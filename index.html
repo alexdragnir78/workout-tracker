@@ -6,906 +6,329 @@
     <title>Workout Tracker Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <style>
-        /* Variables CSS personnalisées */
-        :root {
-            --color-push: #f97316;
-            --color-pull: #10b981;
-            --color-legs: #3b82f6;
-            --gradient-main: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--gradient-main);
-            color: white;
-            min-height: 100vh;
-        }
-
-        /* Sidebar améliorée */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            width: 240px;
-            background: rgba(30, 41, 59, 0.95);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(71, 85, 105, 0.3);
-            transform: translateX(-100%);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 50;
-            box-shadow: 4px 0 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .sidebar.open {
-            transform: translateX(0);
-        }
-
-        .sidebar-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 40;
-        }
-
-        .sidebar-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Navigation améliorée */
-        .nav-item {
-            position: relative;
-            margin: 4px 12px;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.2s ease;
-        }
-
-        .nav-item:hover {
-            background: rgba(71, 85, 105, 0.6);
-            transform: translateX(4px);
-        }
-
-        .nav-item.active {
-            background: linear-gradient(135deg, #06b6d4, #0891b2);
-            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
-        }
-
-        .nav-item.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: white;
-            border-radius: 0 2px 2px 0;
-        }
-
-        /* Cards avec glassmorphism */
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(71, 85, 105, 0.3);
-            border-radius: 16px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .glass-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            border-color: rgba(6, 182, 212, 0.3);
-        }
-
-        /* Boutons améliorés */
-        .btn {
-            position: relative;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #06b6d4, #0891b2);
-            color: white;
-            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.4);
-        }
-
-        /* Day buttons avec animations */
-        .day-btn {
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .day-btn.push.active {
-            background: linear-gradient(135deg, var(--color-push), #ea580c);
-            color: white;
-            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
-        }
-
-        .day-btn.pull.active {
-            background: linear-gradient(135deg, var(--color-pull), #059669);
-            color: white;
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-        }
-
-        .day-btn.legs.active {
-            background: linear-gradient(135deg, var(--color-legs), #2563eb);
-            color: white;
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-        }
-
-        .day-btn:not(.active) {
-            background: rgba(51, 65, 85, 0.5);
-            color: #cbd5e1;
-            border-color: rgba(71, 85, 105, 0.5);
-        }
-
-        .day-btn:not(.active):hover {
-            background: rgba(71, 85, 105, 0.7);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        /* Progress bars animées */
-        .progress-bar {
-            height: 8px;
-            background: rgba(51, 65, 85, 0.5);
-            border-radius: 4px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        /* Inputs améliorés */
-        .form-input, .form-select, .form-textarea {
-            background: rgba(51, 65, 85, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(71, 85, 105, 0.5);
-            border-radius: 10px;
-            padding: 12px 16px;
-            color: white;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none;
-            border-color: #06b6d4;
-            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
-            background: rgba(51, 65, 85, 0.9);
-        }
-
-        /* Workout inputs spécialisés */
-        .workout-input {
-            background: rgba(51, 65, 85, 0.8);
-            border: 1px solid rgba(71, 85, 105, 0.5);
-            border-radius: 8px;
-            padding: 8px 12px;
-            text-align: center;
-            color: white;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .workout-input:focus {
-            outline: none;
-            border-color: #06b6d4;
-            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
-            transform: scale(1.05);
-            background: rgba(6, 182, 212, 0.1);
-        }
-
-        /* Animations et transitions */
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .slide-up {
-            animation: slideUp 0.3s ease-out;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        /* Modal améliorée */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal {
-            background: rgba(30, 41, 59, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(71, 85, 105, 0.3);
-            border-radius: 20px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            transform: scale(0.9);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .modal-header {
-            padding: 24px 24px 0;
-            border-bottom: 1px solid rgba(71, 85, 105, 0.3);
-        }
-
-        .modal-body {
-            padding: 24px;
-        }
-
-        .modal-footer {
-            padding: 0 24px 24px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        /* Stats cards */
-        .stat-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(71, 85, 105, 0.3);
-            border-radius: 16px;
-            padding: 24px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .stat-label {
-            color: #94a3b8;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        /* Scrollbar personnalisée */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(30, 41, 59, 0.5);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(6, 182, 212, 0.6);
-            border-radius: 4px;
-            transition: background 0.3s ease;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(6, 182, 212, 0.8);
-        }
-
-        /* Responsive amélioré */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 280px;
-            }
-            
-            .stat-card {
-                padding: 16px;
-            }
-            
-            .stat-number {
-                font-size: 2rem;
-            }
-            
-            .btn {
-                padding: 10px 20px;
-            }
-        }
-
-        /* Toast amélioré */
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(30, 41, 59, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(71, 85, 105, 0.3);
-            border-radius: 12px;
-            padding: 16px 20px;
-            color: white;
-            font-weight: 500;
-            transform: translateX(100%);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1000;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        .toast.success {
-            border-left: 4px solid #10b981;
-        }
-
-        .toast.error {
-            border-left: 4px solid #ef4444;
-        }
-
-        .toast.info {
-            border-left: 4px solid #06b6d4;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <!-- Overlay pour sidebar -->
+<body class="min-h-screen bg-slate-900 text-white m-0 p-0">
+    <!-- Overlay pour fermer la sidebar -->
     <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
     
-    <!-- Sidebar -->
-    <nav id="sidebar" class="sidebar">
-        <div class="p-6 border-b border-slate-600">
+    <!-- Sidebar compacte avec nouveau style -->
+    <nav id="sidebar" class="sidebar closed">
+        <!-- Header de la sidebar avec style amélioré -->
+        <div class="sidebar-header">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                     <i data-lucide="dumbbell" class="w-6 h-6 text-white"></i>
                 </div>
                 <div>
-                    <h2 class="text-lg font-bold text-white">Workout Tracker</h2>
-                    <p class="text-xs text-slate-400">Version Pro</p>
+                    <span class="sidebar-title">Workout Tracker</span>
+                    <div class="text-xs text-slate-400 mt-1">Version Pro</div>
                 </div>
             </div>
         </div>
         
-        <div class="p-4 space-y-2">
-            <div class="nav-item active">
-                <div class="flex items-center space-x-3 p-3">
-                    <i data-lucide="home" class="w-5 h-5"></i>
-                    <span class="font-medium">Accueil</span>
+        <!-- Navigation principale avec animations -->
+        <div class="sidebar-navigation">
+            <button onclick="navigateTo('home'); closeSidebar();" id="sidebar-home-btn" class="sidebar-nav-item active fade-in">
+                <div class="sidebar-nav-icon">
+                    <i data-lucide="home" class="w-6 h-6"></i>
                 </div>
-            </div>
+                <span class="sidebar-nav-text">Accueil</span>
+            </button>
             
-            <div class="nav-item">
-                <div class="flex items-center space-x-3 p-3">
-                    <i data-lucide="dumbbell" class="w-5 h-5"></i>
-                    <span class="font-medium">Entraînement</span>
+            <button onclick="navigateTo('workout'); closeSidebar();" id="sidebar-workout-btn" class="sidebar-nav-item fade-in" style="animation-delay: 0.1s;">
+                <div class="sidebar-nav-icon">
+                    <i data-lucide="dumbbell" class="w-6 h-6"></i>
                 </div>
-            </div>
+                <span class="sidebar-nav-text">Entraînement</span>
+            </button>
             
-            <div class="nav-item">
-                <div class="flex items-center space-x-3 p-3">
-                    <i data-lucide="trending-up" class="w-5 h-5"></i>
-                    <span class="font-medium">Statistiques</span>
+            <button onclick="navigateTo('stats'); closeSidebar();" id="sidebar-stats-btn" class="sidebar-nav-item fade-in" style="animation-delay: 0.2s;">
+                <div class="sidebar-nav-icon">
+                    <i data-lucide="trending-up" class="w-6 h-6"></i>
                 </div>
-            </div>
+                <span class="sidebar-nav-text">Statistiques</span>
+            </button>
             
-            <div class="nav-item">
-                <div class="flex items-center space-x-3 p-3">
-                    <i data-lucide="download" class="w-5 h-5"></i>
-                    <span class="font-medium">Exporter</span>
+            <button onclick="exportData(); closeSidebar();" class="sidebar-nav-item fade-in" style="animation-delay: 0.3s;">
+                <div class="sidebar-nav-icon">
+                    <i data-lucide="download" class="w-6 h-6"></i>
                 </div>
-            </div>
+                <span class="sidebar-nav-text">Exporter</span>
+            </button>
         </div>
         
-        <div class="mt-auto p-4 border-t border-slate-600">
-            <div class="nav-item">
-                <div class="flex items-center space-x-3 p-3">
-                    <i data-lucide="settings" class="w-5 h-5"></i>
-                    <span class="font-medium">Paramètres</span>
+        <!-- Paramètres en bas avec nouveau style -->
+        <div class="sidebar-bottom">
+            <button onclick="toggleSettings(); closeSidebar();" class="sidebar-settings-item">
+                <div class="sidebar-nav-icon">
+                    <i data-lucide="settings" class="w-6 h-6"></i>
                 </div>
-            </div>
+                <span class="sidebar-nav-text">Paramètres</span>
+            </button>
         </div>
     </nav>
     
-    <!-- Main container -->
-    <div class="min-h-screen" style="margin-left: 0;">
-        <!-- Header -->
-        <header class="bg-slate-800/50 backdrop-blur-xl border-b border-slate-700/50 sticky top-0 z-30">
+    <!-- Container principal -->
+    <div class="app-container">
+        <!-- Header principal avec style glassmorphism -->
+        <header class="main-header">
             <div class="flex items-center justify-between px-6 py-4">
                 <div class="flex items-center space-x-4">
-                    <button onclick="toggleSidebar()" class="p-2 rounded-lg bg-slate-700/50 hover:bg-slate-600/50 transition-colors">
+                    <!-- Bouton hamburger amélioré -->
+                    <button onclick="toggleSidebar()" id="hamburger-btn" class="hamburger-btn hover-lift">
                         <i data-lucide="menu" class="w-6 h-6"></i>
                     </button>
-                    <h1 class="text-xl font-bold">Gestion des Presets</h1>
-                </div>
-                
-                <div class="flex items-center space-x-3">
-                    <div class="px-3 py-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full text-sm font-medium flex items-center space-x-2">
+                    
+                    <h1 class="text-xl font-bold text-white gradient-text">Workout Tracker</h1>
+                    
+                    <span class="week-badge hover-glow">
                         <i data-lucide="calendar" class="w-4 h-4"></i>
-                        <span>Semaine 1</span>
-                    </div>
+                        Semaine <span id="current-week">1</span>
+                    </span>
                 </div>
             </div>
         </header>
-        
-        <!-- Main content -->
-        <main class="p-6">
-            <div class="max-w-7xl mx-auto space-y-8 fade-in">
-                <!-- Header section -->
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-4xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-                            Gestion des Presets
-                        </h1>
-                        <p class="text-slate-400 mt-2">Créez et gérez vos programmes d'entraînement personnalisés</p>
-                    </div>
-                    <div class="flex space-x-3">
-                        <button class="btn btn-primary">
-                            <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
-                            Nouveau preset
-                        </button>
-                        <button class="btn bg-slate-700 hover:bg-slate-600 text-white">
-                            <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
-                            Importer
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Day selector -->
-                <div class="flex justify-center slide-up">
-                    <div class="flex space-x-2 bg-slate-800/50 backdrop-blur-xl p-2 rounded-2xl border border-slate-700/50">
-                        <button class="day-btn push active">Push</button>
-                        <button class="day-btn pull">Pull</button>
-                        <button class="day-btn legs">Legs</button>
-                    </div>
-                </div>
-                
-                <!-- Main grid -->
-                <div class="grid lg:grid-cols-3 gap-8">
-                    <!-- Exercises list -->
-                    <div class="lg:col-span-2 space-y-6">
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-2xl font-bold text-white">Exercices Push</h2>
-                            <button class="p-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 transition-colors">
-                                <i data-lucide="plus" class="w-5 h-5"></i>
-                            </button>
-                        </div>
-                        
-                        <div class="space-y-4">
-                            <!-- Exercise cards -->
-                            <div class="glass-card slide-up">
-                                <div class="p-6">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center space-x-4">
-                                            <div class="w-1 h-12 bg-gradient-to-b from-orange-500 to-orange-600 rounded-full"></div>
-                                            <div>
-                                                <h3 class="font-semibold text-white">Développé Couché Barre</h3>
-                                                <p class="text-slate-400 text-sm">5 séries • 3min repos • Pectoraux</p>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button class="p-2 rounded-lg bg-slate-700/50 hover:bg-cyan-500/20 text-slate-400 hover:text-cyan-400 transition-colors">
-                                                <i data-lucide="edit-2" class="w-4 h-4"></i>
-                                            </button>
-                                            <button class="p-2 rounded-lg bg-slate-700/50 hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-colors">
-                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="glass-card slide-up" style="animation-delay: 0.1s;">
-                                <div class="p-6">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center space-x-4">
-                                            <div class="w-1 h-12 bg-gradient-to-b from-orange-500 to-orange-600 rounded-full"></div>
-                                            <div>
-                                                <h3 class="font-semibold text-white">Développé Couché Incliné</h3>
-                                                <p class="text-slate-400 text-sm">4 séries • 3min repos • Pectoraux</p>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button class="p-2 rounded-lg bg-slate-700/50 hover:bg-cyan-500/20 text-slate-400 hover:text-cyan-400 transition-colors">
-                                                <i data-lucide="edit-2" class="w-4 h-4"></i>
-                                            </button>
-                                            <button class="p-2 rounded-lg bg-slate-700/50 hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-colors">
-                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="glass-card slide-up" style="animation-delay: 0.2s;">
-                                <div class="p-6">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center space-x-4">
-                                            <div class="w-1 h-12 bg-gradient-to-b from-amber-500 to-amber-600 rounded-full"></div>
-                                            <div>
-                                                <h3 class="font-semibold text-white">Développé Militaire</h3>
-                                                <p class="text-slate-400 text-sm">4 séries • 3min repos • Épaules</p>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button class="p-2 rounded-lg bg-slate-700/50 hover:bg-cyan-500/20 text-slate-400 hover:text-cyan-400 transition-colors">
-                                                <i data-lucide="edit-2" class="w-4 h-4"></i>
-                                            </button>
-                                            <button class="p-2 rounded-lg bg-slate-700/50 hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-colors">
-                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Sidebar with preview and stats -->
-                    <div class="space-y-6">
-                        <!-- Workout preview -->
-                        <div class="glass-card slide-up" style="animation-delay: 0.3s;">
-                            <div class="p-6">
-                                <h3 class="text-lg font-semibold text-white mb-6">Aperçu de la séance</h3>
-                                
-                                <div class="grid grid-cols-2 gap-4 mb-6">
-                                    <div class="stat-card">
-                                        <div class="stat-number text-cyan-400">6</div>
-                                        <div class="stat-label">Exercices</div>
-                                    </div>
-                                    <div class="stat-card">
-                                        <div class="stat-number text-cyan-400">23</div>
-                                        <div class="stat-label">Séries totales</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="text-center mb-6">
-                                    <p class="text-slate-400 mb-2">Durée estimée</p>
-                                    <p class="text-3xl font-bold text-gradient bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">55min</p>
-                                </div>
-                                
-                                <div class="space-y-3">
-                                    <h4 class="font-medium text-white">Ordre des exercices</h4>
-                                    <div class="space-y-2">
-                                        <div class="flex items-center space-x-3 text-sm">
-                                            <span class="w-6 h-6 bg-slate-700 rounded-full flex items-center justify-center text-xs font-medium">1</span>
-                                            <span class="flex-1">DC Barre</span>
-                                            <span class="text-slate-400">5×</span>
-                                        </div>
-                                        <div class="flex items-center space-x-3 text-sm">
-                                            <span class="w-6 h-6 bg-slate-700 rounded-full flex items-center justify-center text-xs font-medium">2</span>
-                                            <span class="flex-1">DC Incliné</span>
-                                            <span class="text-slate-400">4×</span>
-                                        </div>
-                                        <div class="flex items-center space-x-3 text-sm">
-                                            <span class="w-6 h-6 bg-slate-700 rounded-full flex items-center justify-center text-xs font-medium">3</span>
-                                            <span class="flex-1">Dev Militaire</span>
-                                            <span class="text-slate-400">4×</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Quick stats -->
-                        <div class="glass-card slide-up" style="animation-delay: 0.4s;">
-                            <div class="p-6">
-                                <h3 class="text-lg font-semibold text-white mb-6">Répartition par muscle</h3>
-                                
-                                <div class="space-y-4">
-                                    <div>
-                                        <div class="flex items-center justify-between text-sm mb-2">
-                                            <div class="flex items-center space-x-2">
-                                                <div class="w-3 h-3 rounded-full bg-orange-500"></div>
-                                                <span>Pectoraux</span>
-                                            </div>
-                                            <div class="flex items-center space-x-2">
-                                                <span class="text-slate-400">3 ex.</span>
-                                                <span class="font-medium">50%</span>
-                                            </div>
-                                        </div>
-                                        <div class="progress-bar">
-                                            <div class="progress-fill bg-gradient-to-r from-orange-500 to-orange-600" style="width: 50%"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div>
-                                        <div class="flex items-center justify-between text-sm mb-2">
-                                            <div class="flex items-center space-x-2">
-                                                <div class="w-3 h-3 rounded-full bg-amber-500"></div>
-                                                <span>Épaules</span>
-                                            </div>
-                                            <div class="flex items-center space-x-2">
-                                                <span class="text-slate-400">2 ex.</span>
-                                                <span class="font-medium">33%</span>
-                                            </div>
-                                        </div>
-                                        <div class="progress-bar">
-                                            <div class="progress-fill bg-gradient-to-r from-amber-500 to-amber-600" style="width: 33%"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div>
-                                        <div class="flex items-center justify-between text-sm mb-2">
-                                            <div class="flex items-center space-x-2">
-                                                <div class="w-3 h-3 rounded-full bg-purple-500"></div>
-                                                <span>Triceps</span>
-                                            </div>
-                                            <div class="flex items-center space-x-2">
-                                                <span class="text-slate-400">1 ex.</span>
-                                                <span class="font-medium">17%</span>
-                                            </div>
-                                        </div>
-                                        <div class="progress-bar">
-                                            <div class="progress-fill bg-gradient-to-r from-purple-500 to-purple-600" style="width: 17%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Action button -->
-                        <button class="w-full btn btn-primary slide-up" style="animation-delay: 0.5s;">
-                            <i data-lucide="play" class="w-5 h-5 mr-2"></i>
-                            Commencer l'entraînement
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Action buttons -->
-                <div class="flex justify-between items-center pt-8 border-t border-slate-700/50 slide-up" style="animation-delay: 0.6s;">
-                    <div class="flex space-x-3">
-                        <button class="btn bg-slate-700 hover:bg-slate-600 text-white">
-                            <i data-lucide="download" class="w-4 h-4 mr-2"></i>
-                            Exporter presets
-                        </button>
-                        <button class="btn bg-red-600 hover:bg-red-500 text-white">
-                            <i data-lucide="refresh-ccw" class="w-4 h-4 mr-2"></i>
-                            Restaurer défauts
-                        </button>
-                    </div>
-                </div>
-            </div>
+
+        <!-- Contenu principal avec animations -->
+        <main id="main-content" class="main-content fade-in">
+            <!-- Pages will be dynamically loaded here -->
         </main>
     </div>
-    
-    <!-- Toast notification -->
-    <div id="toast" class="toast">
-        <div class="flex items-center space-x-2">
-            <i data-lucide="check-circle" class="w-4 h-4"></i>
-            <span>Action réussie</span>
+
+    <!-- Loading Indicator amélioré -->
+    <div id="loading" class="fixed inset-0 bg-slate-900 bg-opacity-75 flex items-center justify-center hidden z-50 backdrop-blur-sm">
+        <div class="glass rounded-xl p-8 flex items-center space-x-4 shadow-2xl">
+            <div class="loading-spinner"></div>
+            <span class="text-lg font-medium">Chargement...</span>
         </div>
     </div>
+
+    <!-- Toast notifications améliorées -->
+    <div id="toast" class="toast">
+        <div class="flex items-center space-x-3">
+            <i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0"></i>
+            <span id="toast-message" class="font-medium">Action réussie</span>
+        </div>
+    </div>
+
+    <!-- Scripts dans le bon ordre -->
+    <script src="config.js"></script>
+    <script src="router.js"></script>
+    <script src="app.js"></script>
+    <script src="pages/home.js"></script>
+    <script src="pages/workout.js"></script>
+    <script src="pages/stats.js"></script>
     
-    <!-- Scripts -->
     <script>
-        // Initialize Lucide icons
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
-        
-        // Sidebar functionality
-        let sidebarOpen = false;
-        
+        // Gestion de la sidebar - AMÉLIORÉE avec animations
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
+            const btn = document.getElementById('hamburger-btn');
             
-            if (sidebarOpen) {
-                closeSidebar();
+            console.log('Toggle sidebar - État actuel:', sidebar.classList.contains('closed') ? 'fermé' : 'ouvert');
+            
+            if (sidebar.classList.contains('closed')) {
+                // Ouvrir avec animation
+                sidebar.classList.remove('closed');
+                sidebar.classList.add('open');
+                overlay.classList.add('show');
+                btn.classList.add('active');
+                
+                // Animer les items de navigation
+                const navItems = sidebar.querySelectorAll('.sidebar-nav-item');
+                navItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.style.transform = 'translateX(0)';
+                        item.style.opacity = '1';
+                    }, index * 50);
+                });
+                
+                console.log('Sidebar ouverte avec animations');
             } else {
-                openSidebar();
+                // Fermer
+                closeSidebar();
             }
-        }
-        
-        function openSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            
-            sidebar.classList.add('open');
-            overlay.classList.add('show');
-            sidebarOpen = true;
         }
         
         function closeSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
+            const btn = document.getElementById('hamburger-btn');
             
             sidebar.classList.remove('open');
+            sidebar.classList.add('closed');
             overlay.classList.remove('show');
-            sidebarOpen = false;
+            btn.classList.remove('active');
+            
+            console.log('Sidebar fermée');
         }
         
-        // Day button functionality
-        function selectDay(day) {
-            const dayButtons = document.querySelectorAll('.day-btn');
-            dayButtons.forEach(btn => btn.classList.remove('active'));
-            
-            const selectedBtn = event.target;
-            selectedBtn.classList.add('active');
-            
-            // Update page content based on selected day
-            updatePageForDay(day);
-        }
-        
-        function updatePageForDay(day) {
-            // This would update the exercises list and stats
-            console.log('Selected day:', day);
-            showToast(`Switched to ${day} exercises`);
-        }
-        
-        // Toast notification
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const messageEl = toast.querySelector('span');
-            
-            messageEl.textContent = message;
-            
-            // Update toast style based on type
-            toast.className = `toast ${type}`;
-            
-            // Show toast
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 100);
-            
-            // Hide toast after 3 seconds
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-        
-        // Keyboard shortcuts
+        // Fermer avec Escape (inchangé)
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeSidebar();
             }
+        });
+        
+        // Fonction pour les paramètres avec toast amélioré
+        function toggleSettings() {
+            showToast('Paramètres - Fonctionnalité à venir', 'info');
+        }
+        
+        // Mettre à jour la navigation active avec animations
+        function updateSidebarNavigation(activePage) {
+            const items = document.querySelectorAll('.sidebar-nav-item');
+            items.forEach(item => {
+                item.classList.remove('active');
+                // Animation de sortie
+                item.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    item.style.transform = 'scale(1)';
+                }, 150);
+            });
             
+            const activeItem = document.getElementById(`sidebar-${activePage}-btn`);
+            if (activeItem) {
+                setTimeout(() => {
+                    activeItem.classList.add('active');
+                    // Animation d'entrée
+                    activeItem.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        activeItem.style.transform = 'scale(1)';
+                    }, 200);
+                }, 100);
+            }
+        }
+        
+        // Toast amélioré avec types et animations
+        function showToastImproved(message, type = 'success', duration = 3000) {
+            const toast = document.getElementById('toast');
+            const messageEl = document.getElementById('toast-message');
+            const iconEl = toast.querySelector('i');
+            
+            if (toast && messageEl) {
+                messageEl.textContent = message;
+                
+                // Changer l'icône selon le type
+                iconEl.setAttribute('data-lucide', 
+                    type === 'success' ? 'check-circle' :
+                    type === 'error' ? 'x-circle' :
+                    type === 'info' ? 'info' : 'check-circle'
+                );
+                
+                // Mettre à jour les classes
+                toast.className = `toast ${type}`;
+                
+                // Réinitialiser les icônes Lucide
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+                
+                // Animation d'entrée
+                toast.classList.add('show');
+                
+                // Animation de sortie
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
+            }
+        }
+        
+        // Remplacer la fonction showToast globale
+        window.showToast = showToastImproved;
+        
+        // Initialisation avec animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.add('closed');
+            
+            // Animation d'entrée de la page
+            const mainContent = document.getElementById('main-content');
+            mainContent.style.opacity = '0';
+            mainContent.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                mainContent.style.transition = 'all 0.6s ease';
+                mainContent.style.opacity = '1';
+                mainContent.style.transform = 'translateY(0)';
+            }, 100);
+            
+            console.log('Sidebar initialisée fermée avec animations');
+            
+            // Précharger les animations
+            const animatedElements = document.querySelectorAll('.fade-in, .slide-up');
+            animatedElements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+        
+        // Animation au changement de page
+        function animatePageTransition() {
+            const mainContent = document.getElementById('main-content');
+            mainContent.style.opacity = '0';
+            mainContent.style.transform = 'translateY(10px)';
+            
+            setTimeout(() => {
+                mainContent.style.opacity = '1';
+                mainContent.style.transform = 'translateY(0)';
+            }, 150);
+        }
+        
+        // Raccourcis clavier améliorés
+        document.addEventListener('keydown', (e) => {
             if (e.ctrlKey || e.metaKey) {
                 switch (e.key) {
                     case 's':
                         e.preventDefault();
-                        showToast('Data saved automatically', 'info');
+                        showToast('Données sauvegardées automatiquement', 'success');
+                        break;
+                    case 'e':
+                        e.preventDefault();
+                        exportData();
                         break;
                     case '1':
                         e.preventDefault();
-                        selectDay('Push');
+                        navigateTo('home');
                         break;
                     case '2':
                         e.preventDefault();
-                        selectDay('Pull');
+                        navigateTo('workout');
                         break;
                     case '3':
                         e.preventDefault();
-                        selectDay('Legs');
+                        navigateTo('stats');
                         break;
                 }
             }
         });
         
-        // Add click events to day buttons
-        document.addEventListener('DOMContentLoaded', () => {
-            const dayButtons = document.querySelectorAll('.day-btn');
-            dayButtons.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const day = e.target.textContent.trim();
-                    selectDay(day);
-                });
-            });
-        });
-        
-        // Animate progress bars on load
-        window.addEventListener('load', () => {
+        // Animation des progress bars au chargement
+        function animateProgressBars() {
             const progressBars = document.querySelectorAll('.progress-fill');
-            progressBars.forEach(bar => {
-                const width = bar.style.width;
+            progressBars.forEach((bar, index) => {
+                const targetWidth = bar.style.width || bar.getAttribute('data-width') || '0%';
                 bar.style.width = '0%';
+                
                 setTimeout(() => {
-                    bar.style.width = width;
-                }, 500);
+                    bar.style.width = targetWidth;
+                }, 500 + (index * 100));
             });
-        });
-        
-        // Add hover effects to exercise cards
-        document.addEventListener('DOMContentLoaded', () => {
-            const exerciseCards = document.querySelectorAll('.glass-card');
-            exerciseCards.forEach(card => {
-                card.classList.add('group');
-            });
-        });
-        
-        // Simulate data loading
-        function simulateDataLoad() {
-            setTimeout(() => {
-                showToast('Presets loaded successfully');
-            }, 1000);
         }
         
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', () => {
-            simulateDataLoad();
-            
-            // Add staggered animations to cards
-            const cards = document.querySelectorAll('.slide-up');
-            cards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.1}s`;
+        // Appeler l'animation des progress bars après le chargement du contenu
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'childList') {
+                    setTimeout(animateProgressBars, 200);
+                }
             });
+        });
+        
+        observer.observe(document.getElementById('main-content'), {
+            childList: true,
+            subtree: true
         });
     </script>
 </body>
