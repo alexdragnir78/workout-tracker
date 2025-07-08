@@ -9,12 +9,25 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="min-h-screen bg-slate-900 text-white m-0 p-0">
+    <!-- DEBUG: Script de débogage -->
+    <script>
+        console.log('🚀 Début chargement Workout Tracker');
+        
+        // Forcer le masquage du loading après 3 secondes
+        setTimeout(() => {
+            const loading = document.getElementById('loading');
+            if (loading && !loading.classList.contains('hidden')) {
+                console.log('⏰ Masquage forcé du loading');
+                loading.classList.add('hidden');
+            }
+        }, 3000);
+    </script>
+
     <!-- Overlay pour fermer la sidebar -->
     <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
     
-    <!-- Sidebar compacte avec nouveau style -->
+    <!-- Sidebar -->
     <nav id="sidebar" class="sidebar closed">
-        <!-- Header de la sidebar avec style amélioré -->
         <div class="sidebar-header">
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -27,30 +40,29 @@
             </div>
         </div>
         
-        <!-- Navigation principale avec animations -->
         <div class="sidebar-navigation">
-            <button onclick="navigateTo('home'); closeSidebar();" id="sidebar-home-btn" class="sidebar-nav-item active fade-in">
+            <button onclick="navigateTo('home'); closeSidebar();" id="sidebar-home-btn" class="sidebar-nav-item active">
                 <div class="sidebar-nav-icon">
                     <i data-lucide="home" class="w-6 h-6"></i>
                 </div>
                 <span class="sidebar-nav-text">Accueil</span>
             </button>
             
-            <button onclick="navigateTo('workout'); closeSidebar();" id="sidebar-workout-btn" class="sidebar-nav-item fade-in" style="animation-delay: 0.1s;">
+            <button onclick="navigateTo('workout'); closeSidebar();" id="sidebar-workout-btn" class="sidebar-nav-item">
                 <div class="sidebar-nav-icon">
                     <i data-lucide="dumbbell" class="w-6 h-6"></i>
                 </div>
                 <span class="sidebar-nav-text">Entraînement</span>
             </button>
             
-            <button onclick="navigateTo('stats'); closeSidebar();" id="sidebar-stats-btn" class="sidebar-nav-item fade-in" style="animation-delay: 0.2s;">
+            <button onclick="navigateTo('stats'); closeSidebar();" id="sidebar-stats-btn" class="sidebar-nav-item">
                 <div class="sidebar-nav-icon">
                     <i data-lucide="trending-up" class="w-6 h-6"></i>
                 </div>
                 <span class="sidebar-nav-text">Statistiques</span>
             </button>
             
-            <button onclick="exportData(); closeSidebar();" class="sidebar-nav-item fade-in" style="animation-delay: 0.3s;">
+            <button onclick="exportData(); closeSidebar();" class="sidebar-nav-item">
                 <div class="sidebar-nav-icon">
                     <i data-lucide="download" class="w-6 h-6"></i>
                 </div>
@@ -58,7 +70,6 @@
             </button>
         </div>
         
-        <!-- Paramètres en bas avec nouveau style -->
         <div class="sidebar-bottom">
             <button onclick="toggleSettings(); closeSidebar();" class="sidebar-settings-item">
                 <div class="sidebar-nav-icon">
@@ -71,18 +82,17 @@
     
     <!-- Container principal -->
     <div class="app-container">
-        <!-- Header principal avec style glassmorphism -->
+        <!-- Header principal -->
         <header class="main-header">
             <div class="flex items-center justify-between px-6 py-4">
                 <div class="flex items-center space-x-4">
-                    <!-- Bouton hamburger amélioré -->
-                    <button onclick="toggleSidebar()" id="hamburger-btn" class="hamburger-btn hover-lift">
+                    <button onclick="toggleSidebar()" id="hamburger-btn" class="hamburger-btn">
                         <i data-lucide="menu" class="w-6 h-6"></i>
                     </button>
                     
-                    <h1 class="text-xl font-bold text-white gradient-text">Workout Tracker</h1>
+                    <h1 class="text-xl font-bold text-white">Workout Tracker</h1>
                     
-                    <span class="week-badge hover-glow">
+                    <span class="week-badge">
                         <i data-lucide="calendar" class="w-4 h-4"></i>
                         Semaine <span id="current-week">1</span>
                     </span>
@@ -90,64 +100,139 @@
             </div>
         </header>
 
-        <!-- Contenu principal avec animations -->
-        <main id="main-content" class="main-content fade-in">
-            <!-- Pages will be dynamically loaded here -->
+        <!-- Contenu principal -->
+        <main id="main-content" class="main-content">
+            <!-- Contenu de fallback en cas de problème -->
+            <div class="max-w-7xl mx-auto space-y-8 fade-in">
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="dumbbell" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h1 class="text-4xl font-bold text-white mb-4">Workout Tracker</h1>
+                    <p class="text-slate-400 text-lg mb-8">Chargement de votre application...</p>
+                    <div class="space-y-4">
+                        <div class="loading-spinner mx-auto"></div>
+                        <div class="text-sm text-slate-500">
+                            Initialisation en cours...
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
-    <!-- Loading Indicator amélioré -->
-    <div id="loading" class="fixed inset-0 bg-slate-900 bg-opacity-75 flex items-center justify-center hidden z-50 backdrop-blur-sm">
+    <!-- Loading Indicator simplifié -->
+    <div id="loading" class="fixed inset-0 bg-slate-900 bg-opacity-75 flex items-center justify-center z-50 backdrop-blur-sm">
         <div class="glass rounded-xl p-8 flex items-center space-x-4 shadow-2xl">
             <div class="loading-spinner"></div>
             <span class="text-lg font-medium">Chargement...</span>
         </div>
     </div>
 
-    <!-- Toast notifications améliorées -->
+    <!-- Toast notifications -->
     <div id="toast" class="toast">
         <div class="flex items-center space-x-3">
-            <i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0"></i>
-            <span id="toast-message" class="font-medium">Action réussie</span>
+            <i data-lucide="check-circle" class="w-5 h-5"></i>
+            <span id="toast-message">Action réussie</span>
         </div>
     </div>
 
-    <!-- Scripts dans le bon ordre -->
-    <script src="config.js"></script>
-    <script src="router.js"></script>
-    <script src="app.js"></script>
-    <script src="pages/home.js"></script>
-    <script src="pages/workout.js"></script>
-    <script src="pages/stats.js"></script>
+    <!-- Scripts - ORDRE IMPORTANT -->
+    <script>
+        // Variables globales pour éviter les conflits
+        window.appLoaded = false;
+        window.scriptsToLoad = 0;
+        window.scriptsLoaded = 0;
+        
+        function checkAllScriptsLoaded() {
+            if (window.scriptsLoaded >= window.scriptsToLoad && !window.appLoaded) {
+                window.appLoaded = true;
+                console.log('✅ Tous les scripts chargés, initialisation de l\'app');
+                
+                // Masquer le loading
+                const loading = document.getElementById('loading');
+                if (loading) {
+                    loading.classList.add('hidden');
+                }
+                
+                // Initialiser le router si disponible
+                if (typeof Router !== 'undefined') {
+                    window.router = new Router();
+                } else {
+                    console.log('⚠️ Router non disponible, chargement manuel');
+                    loadHomePage();
+                }
+                
+                // Initialiser les icônes
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            }
+        }
+        
+        function loadHomePage() {
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) {
+                mainContent.innerHTML = `
+                    <div class="max-w-7xl mx-auto space-y-8">
+                        <div class="text-center py-12">
+                            <h1 class="text-4xl font-bold text-white mb-4">Workout Tracker</h1>
+                            <p class="text-slate-400 text-lg mb-8">Votre application de suivi d'entraînement</p>
+                            <div class="space-x-4">
+                                <button onclick="window.location.reload()" class="btn-primary">
+                                    Recharger
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    </script>
+
+    <!-- Chargement des scripts avec gestion d'erreurs -->
+    <script>
+        window.scriptsToLoad = 6; // Augmenté à 6 pour inclure stats.js
+        
+        function loadScript(src, callback) {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = () => {
+                window.scriptsLoaded++;
+                console.log(`✅ Script chargé: ${src} (${window.scriptsLoaded}/${window.scriptsToLoad})`);
+                if (callback) callback();
+                checkAllScriptsLoaded();
+            };
+            script.onerror = () => {
+                window.scriptsLoaded++;
+                console.error(`❌ Erreur chargement: ${src}`);
+                checkAllScriptsLoaded();
+            };
+            document.head.appendChild(script);
+        }
+        
+        // Charger les scripts un par un dans le bon ordre
+        loadScript('config.js');
+        loadScript('router.js');
+        loadScript('app.js');
+        loadScript('pages/home.js');
+        loadScript('pages/workout.js');
+        loadScript('pages/stats.js'); // ← AJOUTÉ
+    </script>
     
     <script>
-        // Gestion de la sidebar - AMÉLIORÉE avec animations
+        // Fonctions de base pour la sidebar
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
             const btn = document.getElementById('hamburger-btn');
             
-            console.log('Toggle sidebar - État actuel:', sidebar.classList.contains('closed') ? 'fermé' : 'ouvert');
-            
             if (sidebar.classList.contains('closed')) {
-                // Ouvrir avec animation
                 sidebar.classList.remove('closed');
                 sidebar.classList.add('open');
                 overlay.classList.add('show');
                 btn.classList.add('active');
-                
-                // Animer les items de navigation
-                const navItems = sidebar.querySelectorAll('.sidebar-nav-item');
-                navItems.forEach((item, index) => {
-                    setTimeout(() => {
-                        item.style.transform = 'translateX(0)';
-                        item.style.opacity = '1';
-                    }, index * 50);
-                });
-                
-                console.log('Sidebar ouverte avec animations');
             } else {
-                // Fermer
                 closeSidebar();
             }
         }
@@ -161,174 +246,43 @@
             sidebar.classList.add('closed');
             overlay.classList.remove('show');
             btn.classList.remove('active');
-            
-            console.log('Sidebar fermée');
         }
         
-        // Fermer avec Escape (inchangé)
+        function navigateTo(page) {
+            console.log(`Navigation vers: ${page}`);
+            if (window.router) {
+                window.router.navigateTo(page);
+            } else {
+                console.log('Router non disponible');
+            }
+        }
+        
+        function exportData() {
+            console.log('Export des données');
+        }
+        
+        function toggleSettings() {
+            console.log('Paramètres');
+        }
+        
+        // Fermer avec Escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeSidebar();
             }
         });
         
-        // Fonction pour les paramètres avec toast amélioré
-        function toggleSettings() {
-            showToast('Paramètres - Fonctionnalité à venir', 'info');
-        }
-        
-        // Mettre à jour la navigation active avec animations
-        function updateSidebarNavigation(activePage) {
-            const items = document.querySelectorAll('.sidebar-nav-item');
-            items.forEach(item => {
-                item.classList.remove('active');
-                // Animation de sortie
-                item.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    item.style.transform = 'scale(1)';
-                }, 150);
-            });
-            
-            const activeItem = document.getElementById(`sidebar-${activePage}-btn`);
-            if (activeItem) {
-                setTimeout(() => {
-                    activeItem.classList.add('active');
-                    // Animation d'entrée
-                    activeItem.style.transform = 'scale(1.05)';
-                    setTimeout(() => {
-                        activeItem.style.transform = 'scale(1)';
-                    }, 200);
-                }, 100);
-            }
-        }
-        
-        // Toast amélioré avec types et animations
-        function showToastImproved(message, type = 'success', duration = 3000) {
-            const toast = document.getElementById('toast');
-            const messageEl = document.getElementById('toast-message');
-            const iconEl = toast.querySelector('i');
-            
-            if (toast && messageEl) {
-                messageEl.textContent = message;
-                
-                // Changer l'icône selon le type
-                iconEl.setAttribute('data-lucide', 
-                    type === 'success' ? 'check-circle' :
-                    type === 'error' ? 'x-circle' :
-                    type === 'info' ? 'info' : 'check-circle'
-                );
-                
-                // Mettre à jour les classes
-                toast.className = `toast ${type}`;
-                
-                // Réinitialiser les icônes Lucide
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
-                
-                // Animation d'entrée
-                toast.classList.add('show');
-                
-                // Animation de sortie
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, duration);
-            }
-        }
-        
-        // Remplacer la fonction showToast globale
-        window.showToast = showToastImproved;
-        
-        // Initialisation avec animations
+        // Initialisation après chargement de la page
         document.addEventListener('DOMContentLoaded', () => {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.add('closed');
+            console.log('📄 DOM chargé');
             
-            // Animation d'entrée de la page
-            const mainContent = document.getElementById('main-content');
-            mainContent.style.opacity = '0';
-            mainContent.style.transform = 'translateY(20px)';
-            
+            // Timeout de sécurité final
             setTimeout(() => {
-                mainContent.style.transition = 'all 0.6s ease';
-                mainContent.style.opacity = '1';
-                mainContent.style.transform = 'translateY(0)';
-            }, 100);
-            
-            console.log('Sidebar initialisée fermée avec animations');
-            
-            // Précharger les animations
-            const animatedElements = document.querySelectorAll('.fade-in, .slide-up');
-            animatedElements.forEach((el, index) => {
-                el.style.animationDelay = `${index * 0.1}s`;
-            });
-        });
-        
-        // Animation au changement de page
-        function animatePageTransition() {
-            const mainContent = document.getElementById('main-content');
-            mainContent.style.opacity = '0';
-            mainContent.style.transform = 'translateY(10px)';
-            
-            setTimeout(() => {
-                mainContent.style.opacity = '1';
-                mainContent.style.transform = 'translateY(0)';
-            }, 150);
-        }
-        
-        // Raccourcis clavier améliorés
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey || e.metaKey) {
-                switch (e.key) {
-                    case 's':
-                        e.preventDefault();
-                        showToast('Données sauvegardées automatiquement', 'success');
-                        break;
-                    case 'e':
-                        e.preventDefault();
-                        exportData();
-                        break;
-                    case '1':
-                        e.preventDefault();
-                        navigateTo('home');
-                        break;
-                    case '2':
-                        e.preventDefault();
-                        navigateTo('workout');
-                        break;
-                    case '3':
-                        e.preventDefault();
-                        navigateTo('stats');
-                        break;
+                if (!window.appLoaded) {
+                    console.log('🔧 Timeout final - forçage du chargement');
+                    checkAllScriptsLoaded();
                 }
-            }
-        });
-        
-        // Animation des progress bars au chargement
-        function animateProgressBars() {
-            const progressBars = document.querySelectorAll('.progress-fill');
-            progressBars.forEach((bar, index) => {
-                const targetWidth = bar.style.width || bar.getAttribute('data-width') || '0%';
-                bar.style.width = '0%';
-                
-                setTimeout(() => {
-                    bar.style.width = targetWidth;
-                }, 500 + (index * 100));
-            });
-        }
-        
-        // Appeler l'animation des progress bars après le chargement du contenu
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'childList') {
-                    setTimeout(animateProgressBars, 200);
-                }
-            });
-        });
-        
-        observer.observe(document.getElementById('main-content'), {
-            childList: true,
-            subtree: true
+            }, 2000);
         });
     </script>
 </body>

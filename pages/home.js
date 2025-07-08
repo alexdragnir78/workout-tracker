@@ -848,4 +848,66 @@ class HomePage {
             return parseFloat(restTime) || 1.5; // Default 1.5 minutes
         }
     }
+    // Ajoutez ces méthodes à la fin de votre classe HomePage dans pages/home.js
+// Juste avant la fermeture de la classe }
+
+    // Méthodes utilitaires manquantes
+    getDayColorClass(day) {
+        const colors = {
+            Push: 'bg-gradient-to-b from-orange-500 to-orange-600',
+            Pull: 'bg-gradient-to-b from-green-500 to-green-600',
+            Legs: 'bg-gradient-to-b from-blue-500 to-blue-600'
+        };
+        return colors[day] || 'bg-gradient-to-b from-slate-500 to-slate-600';
+    }
+    
+    getDayGradientClass(day) {
+        const gradients = {
+            Push: 'from-orange-500 to-orange-600',
+            Pull: 'from-green-500 to-green-600',
+            Legs: 'from-blue-500 to-blue-600'
+        };
+        return gradients[day] || 'from-slate-500 to-slate-600';
+    }
+    
+    calculateEstimatedTime(exercises) {
+        let totalMinutes = 0;
+        
+        exercises.forEach(exercise => {
+            // Temps d'exécution des séries (estimé à 30s par série)
+            totalMinutes += exercise.sets * 0.5;
+            
+            // Temps de repos
+            const restMinutes = this.parseRestTime(exercise.restTime);
+            totalMinutes += (exercise.sets - 1) * restMinutes; // Pas de repos après la dernière série
+        });
+        
+        // Temps de transition entre exercices (estimé à 30s)
+        totalMinutes += (exercises.length - 1) * 0.5;
+        
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = Math.round(totalMinutes % 60);
+        
+        if (hours > 0) {
+            return `${hours}h${minutes.toString().padStart(2, '0')}`;
+        } else {
+            return `${minutes}min`;
+        }
+    }
+    
+    parseRestTime(restTime) {
+        if (restTime.includes('h')) {
+            return parseFloat(restTime) * 60;
+        } else if (restTime.includes('m')) {
+            const match = restTime.match(/(\d+)m(\d+)?/);
+            if (match) {
+                const minutes = parseInt(match[1]);
+                const seconds = match[2] ? parseInt(match[2]) : 0;
+                return minutes + seconds / 60;
+            }
+            return parseFloat(restTime);
+        } else {
+            return parseFloat(restTime) || 1.5; // Default 1.5 minutes
+        }
+    }
 }
